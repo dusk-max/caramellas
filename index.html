@@ -224,6 +224,7 @@ const MENU = [
   .row-link{position:absolute; top:0; right:0; bottom:0; left:0; z-index:1}
   .item-tap .sizes{position:relative; z-index:2; align-self:flex-start}
   .item-tap:active{background:rgba(198,122,44,.06)}
+  .line-end{display:flex; align-items:baseline; flex:0 0 auto}
   .chev{
     color:var(--caramel); font-size:20px; line-height:1;
     padding-left:12px; flex:0 0 auto;
@@ -408,18 +409,26 @@ const MENU = [
 
         var multi = it.prices && it.prices.length > 1;
 
-        // A featured card is the one item being shown off, so it keeps its own
-        // price even where the category states it for everything else.
+        // Two separate questions, deliberately not the same one.
+        //
+        // Where the price is shown depends on the category: a category whose
+        // items all cost the same states it once, above.
         var quiet = uniform && !it.featured;
-
-        // A quiet row carries no button: the row is the link, and the chevron
-        // is what says so. An item nobody can order stays plain text.
-        var tapRow = quiet && !it.noOrder;
+        //
+        // Whether the row is tappable does not depend on that at all. Every
+        // compact row is the link, priced or not — tying the two together
+        // meant a category showing its own prices also got a button on each
+        // of nineteen rows, which is the repetition the row link exists to
+        // avoid. A featured card keeps its button; nothing you cannot order
+        // becomes a link.
+        var tapRow = !it.featured && !it.noOrder;
 
         var head = '<div class="line">' +
                    '<h3 class="name">' + esc(it.name) + '</h3>' +
-                   (quiet ? '' : '<span class="price">₹' + esc(priceOf(it, 0)) + '</span>') +
-                   (tapRow ? '<span class="chev" aria-hidden="true">\u203a</span>' : '') +
+                   '<span class="line-end">' +
+                     (quiet ? '' : '<span class="price">₹' + esc(priceOf(it, 0)) + '</span>') +
+                     (tapRow ? '<span class="chev" aria-hidden="true">\u203a</span>' : '') +
+                   '</span>' +
                    '</div>' +
                    (it.tag ? '<div class="tag">' + esc(it.tag) + '</div>' : '');
 
