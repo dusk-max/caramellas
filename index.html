@@ -49,9 +49,11 @@ const SHOP = {
 //   prices:          The sizes this cake is sold in, cheapest first, as
 //                    pairs of [size, price]:
 //                        prices: [["250 g","320"], ["500 g","600"], ["1 kg","1150"]]
-//                    They appear as tappable chips; the first is selected
-//                    and its price is the one shown. Tapping a chip changes
-//                    the price AND the size named in the WhatsApp message.
+//                    They appear as a small size toggle; the first is
+//                    selected. Tapping one changes the price shown and the
+//                    size named in the WhatsApp message. Where every item in
+//                    a category has the same prices, they are stated once
+//                    under the category heading instead of on each row.
 //                    A cake sold in one size only is ONE entry with one
 //                    pair — never a separate entry per weight:
 //                        prices: [["per piece","90"]]
@@ -80,16 +82,11 @@ const SHOP = {
 //                    back to the drawn placeholder on its own.
 const MENU = [
 
-  { category: "Signature cakes", name: "Hazelnut",               prices: [["500 g","430"], ["1 kg","850"]] },
-  { category: "Signature cakes", name: "Red Velvet",             prices: [["500 g","430"], ["1 kg","850"]] },
-  { category: "Signature cakes", name: "Red Heart (Rasmalai)",   prices: [["500 g","430"], ["1 kg","850"]] },
-  { category: "Signature cakes", name: "Cassatta",               prices: [["500 g","430"], ["1 kg","850"]] },
-  { category: "Signature cakes", name: "Rose Litchi",            prices: [["500 g","430"], ["1 kg","850"]] },
-  { category: "Signature cakes", name: "Kaju Katli",             prices: [["500 g","430"], ["1 kg","850"]] },
-  { category: "Signature cakes", name: "Premium Rasmalai",       prices: [["500 g","430"], ["1 kg","850"]] },
-  { category: "Signature cakes", name: "Triple Mousse",          prices: [["500 g","500"]] },
-  { category: "Signature cakes", name: "Belgium Chocolate",      prices: [["500 g","500"]] },
-  { category: "Signature cakes", name: "Kunafa Chocolate",       prices: [["500 g","500"]] },
+  { category: "Signature cakes", name: "Triple Mousse",          prices: [["500 g","500"], ["1 kg","1000"]] },
+  { category: "Signature cakes", name: "Belgium Chocolate",      prices: [["500 g","500"], ["1 kg","1000"]] },
+  { category: "Signature cakes", name: "Kunafa Chocolate",       prices: [["500 g","500"], ["1 kg","1000"]] },
+  { category: "Signature cakes", name: "Truffle",                prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Signature cakes", name: "Pista Rasmalai",         prices: [["500 g","380"], ["1 kg","750"]] },
 
   { category: "Premium", name: "Rasmalai Delight",       prices: [["500 g","550"], ["1 kg","1100"]] },
   { category: "Premium", name: "Mawa Gulab Jamun",       prices: [["500 g","550"], ["1 kg","1100"]] },
@@ -101,15 +98,20 @@ const MENU = [
   { category: "Classic cakes", name: "Choco Marble",           prices: [["500 g","380"], ["1 kg","750"]] },
   { category: "Classic cakes", name: "Choco Oreo",             prices: [["500 g","380"], ["1 kg","750"]] },
   { category: "Classic cakes", name: "Milky Chocolate",        prices: [["500 g","380"], ["1 kg","750"]] },
-  { category: "Classic cakes", name: "Truffle",                prices: [["500 g","380"], ["1 kg","750"]] },
   { category: "Classic cakes", name: "Heart Truffle",          prices: [["500 g","380"], ["1 kg","750"]] },
   { category: "Classic cakes", name: "Black and White Forest", prices: [["500 g","380"], ["1 kg","750"]] },
   { category: "Classic cakes", name: "White Forest",           prices: [["500 g","380"], ["1 kg","750"]] },
   { category: "Classic cakes", name: "Pineapple",              prices: [["500 g","380"], ["1 kg","750"]] },
-  { category: "Classic cakes", name: "Pista Rasmalai",         prices: [["500 g","380"], ["1 kg","750"]] },
   { category: "Classic cakes", name: "Blueberry",              prices: [["500 g","380"], ["1 kg","750"]] },
   { category: "Classic cakes", name: "Strawberry",             prices: [["500 g","380"], ["1 kg","750"]] },
   { category: "Classic cakes", name: "Rose Petal",             prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Hazelnut",               prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Classic cakes", name: "Red Velvet",             prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Classic cakes", name: "Red Heart (Rasmalai)",   prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Classic cakes", name: "Cassatta",               prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Classic cakes", name: "Rose Litchi",            prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Classic cakes", name: "Kaju Katli",             prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Classic cakes", name: "Premium Rasmalai",       prices: [["500 g","430"], ["1 kg","850"]] },
 
   { category: "Pastries", name: "Rasmalai pastry",        prices: [["per piece","40"]] },
   { category: "Pastries", name: "Pineapple pastry",       prices: [["per piece","40"]] },
@@ -179,10 +181,11 @@ const MENU = [
     border-bottom:2px solid transparent;
   }
   .cats a.on{color:var(--espresso); border-bottom-color:var(--caramel)}
+  .cats a:active{color:var(--espresso)}
 
   /* ---- menu ---- */
-  .cat{padding-top:58px; scroll-margin-top:52px}
-  .cat:first-child{padding-top:44px}
+  .cat{padding-top:40px}
+  .cat[hidden]{display:none}
   .cat-head{
     margin:0 0 6px; font-size:11.5px; font-weight:600;
     letter-spacing:.15em;
@@ -210,18 +213,8 @@ const MENU = [
   .item-featured .name{font-family:var(--serif); font-weight:400; font-size:23px}
   .item-featured .price{font-size:21px}
 
-  /* ---- size chips ---- */
+  /* ---- sizes ---- */
   .cat-prices{margin:0 0 4px; font-size:13.5px; color:var(--muted)}
-
-  .sizes{display:flex; flex-wrap:wrap; gap:7px; margin-top:14px}
-  .chip{
-    font-family:inherit; font-size:13px; line-height:1;
-    padding:0 13px; min-height:36px;
-    background:transparent; color:var(--espresso);
-    border:1px solid var(--border); border-radius:2px;
-    cursor:pointer; white-space:nowrap;
-  }
-  .chip.is-on{background:var(--espresso); border-color:var(--espresso); color:var(--cream)}
 
   /* A row in a uniform category is itself the link. The anchor is laid over
      the whole row rather than wrapped around it — an <a> may not contain
@@ -229,7 +222,7 @@ const MENU = [
      above the link, so a tap on the toggle never reaches it. */
   .item-tap{position:relative}
   .row-link{position:absolute; top:0; right:0; bottom:0; left:0; z-index:1}
-  .item-tap .sizes-plain{position:relative; z-index:2; align-self:flex-start}
+  .item-tap .sizes{position:relative; z-index:2; align-self:flex-start}
   .item-tap:active{background:rgba(198,122,44,.06)}
   .chev{
     color:var(--caramel); font-size:20px; line-height:1;
@@ -237,8 +230,9 @@ const MENU = [
   }
   .row-link:focus-visible{outline:2px solid var(--caramel); outline-offset:-3px}
 
-  /* the lighter size choice used where the category already states prices */
-  .sizes-plain{display:flex; align-items:center; gap:14px; margin-top:10px}
+  /* The one size control on the page — same in every category, on a
+     featured card as on a compact row. */
+  .sizes{display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin-top:10px}
   .opt{
     font-family:inherit; font-size:13px; line-height:1;
     padding:9px 6px; min-height:36px;
@@ -246,7 +240,7 @@ const MENU = [
     color:var(--muted); cursor:pointer;
   }
   .opt.is-on{color:var(--espresso); border-bottom-color:var(--caramel)}
-  .sizes-plain .sep{color:var(--border); font-size:13px}
+  .sizes .sep{color:var(--border); font-size:13px}
 
   /* ---- order button ---- */
   .order{
@@ -415,7 +409,7 @@ const MENU = [
         var multi = it.prices && it.prices.length > 1;
 
         // A featured card is the one item being shown off, so it keeps its own
-        // price and chips even where the category states them.
+        // price even where the category states it for everything else.
         var quiet = uniform && !it.featured;
 
         // A quiet row carries no button: the row is the link, and the chevron
@@ -429,28 +423,19 @@ const MENU = [
                    '</div>' +
                    (it.tag ? '<div class="tag">' + esc(it.tag) + '</div>' : '');
 
-        var sizes;
-        if (quiet) {
-          // Prices are stated above, so the choice shows sizes alone. It still
-          // has to exist: it decides the size the message names. A single-size
-          // item needs no control at all.
-          sizes = multi
-            ? '<div class="sizes-plain">' + it.prices.map(function (p, i) {
-                return (i ? '<span class="sep">/</span>' : '') +
-                       '<button type="button" class="pick opt' + (i === 0 ? ' is-on' : '') +
-                       '" data-s="' + i + '" aria-pressed="' + (i === 0 ? 'true' : 'false') +
-                       '">' + esc(p[0]) + '</button>';
-              }).join("") + '</div>'
-            : '';
-        } else {
-          sizes = multi
-            ? '<div class="sizes">' + it.prices.map(function (p, i) {
-                return '<button type="button" class="pick chip' + (i === 0 ? ' is-on' : '') +
-                       '" data-s="' + i + '" aria-pressed="' + (i === 0 ? 'true' : 'false') +
-                       '">' + esc(p[0]) + '</button>';
-              }).join("") + '</div>'
-            : (sizeOf(it, 0) ? '<div class="single">' + esc(sizeOf(it, 0)) + '</div>' : '');
-        }
+        // One control, everywhere: featured or compact, whatever the category
+        // does about prices. A single size needs no control, only its label —
+        // and not even that where the heading has already stated it.
+        var sizes = multi
+          ? '<div class="sizes">' + it.prices.map(function (p, i) {
+              return (i ? '<span class="sep">/</span>' : '') +
+                     '<button type="button" class="pick opt' + (i === 0 ? ' is-on' : '') +
+                     '" data-s="' + i + '" aria-pressed="' + (i === 0 ? 'true' : 'false') +
+                     '">' + esc(p[0]) + '</button>';
+            }).join("") + '</div>'
+          : (quiet || !sizeOf(it, 0)
+              ? ''
+              : '<div class="single">' + esc(sizeOf(it, 0)) + '</div>');
 
         var action, rowLink = "";
         if (it.noOrder) {
@@ -486,7 +471,7 @@ const MENU = [
       '</div></section>';
   }).join("");
 
-  // ---- tapping a size chip repoints both the price and the link ----
+  // ---- tapping a size repoints both the price and the link ----
   document.getElementById("menu").addEventListener("click", function (e) {
     var pick = e.target.closest && e.target.closest(".pick");
     if (!pick) return;
@@ -511,42 +496,58 @@ const MENU = [
     if (a) a.href = wa(message(it, i));
   });
 
-  // ---- underline the category currently in view ----
+  // ---- the nav is a tab bar: one category on screen at a time ----
+  // Nothing here has to work out what is being looked at any more, because
+  // only one category is ever showing. The active tab is simply the last one
+  // tapped, or the one the address names.
   var navLinks = {};
   Array.prototype.forEach.call(document.querySelectorAll("#cats a"), function (a) {
     navLinks[a.getAttribute("data-for")] = a;
   });
-  var setActive = function (id) {
+  var sections = {};
+  Array.prototype.forEach.call(document.querySelectorAll("section.cat"), function (sec) {
+    sections[sec.id] = sec;
+  });
+
+  var firstId = order.length ? slug(order[0]) : null;
+
+  var show = function (id, scroll) {
+    if (!sections[id]) id = firstId;
+    if (!id) return;
+    Object.keys(sections).forEach(function (k) { sections[k].hidden = (k !== id); });
     Object.keys(navLinks).forEach(function (k) {
-      navLinks[k].classList.toggle("on", k === id);
+      var on = (k === id);
+      navLinks[k].classList.toggle("on", on);
+      if (on) { navLinks[k].setAttribute("aria-current", "true"); }
+      else { navLinks[k].removeAttribute("aria-current"); }
     });
+    if (scroll) {
+      // Back to the top of the list, with the tab bar pinned above it.
+      var bar = document.querySelector(".cats");
+      window.scrollTo(0, bar ? bar.offsetTop : 0);
+    }
   };
-  var sections = document.querySelectorAll("section.cat");
-  var BAR = 56;
 
-  // The category being read is the last one whose top has passed under the
-  // sticky bar. This is recomputed from live geometry on every callback
-  // rather than encoded in the observer's own rootMargin, so it survives
-  // rotation and resize — a viewport height measured once at startup does
-  // not stay true, and a band built from it silently stops matching.
-  var pickActive = function () {
-    if (!sections.length) return;
-    var best = sections[0];
-    Array.prototype.forEach.call(sections, function (s) {
-      if (s.getBoundingClientRect().top <= BAR) best = s;
-    });
-    setActive(best.id);
+  var fromHash = function () {
+    return (location.hash || "").replace(/^#/, "");
   };
-  if (order.length) setActive(slug(order[0]));
 
-  if (window.IntersectionObserver && sections.length) {
-    var io = new IntersectionObserver(pickActive, {
-      rootMargin: "-" + BAR + "px 0px 0px 0px",
-      threshold: [0, 0.25, 0.5, 0.75, 1]
-    });
-    Array.prototype.forEach.call(sections, function (s) { io.observe(s); });
-    pickActive();
-  }
+  document.getElementById("cats").addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[data-for]");
+    if (!a) return;
+    e.preventDefault();          // the hash is set below, without the jump
+    var id = a.getAttribute("data-for");
+    // replaceState rather than assigning location.hash: the latter would
+    // scroll the named section to the top itself, fighting the scroll below.
+    if (history.replaceState) { history.replaceState(null, "", "#" + id); }
+    show(id, true);
+  });
+
+  // Deep links keep working: /#premium opens Premium, and so does editing
+  // the address or going back to it.
+  window.addEventListener("hashchange", function () { show(fromHash(), true); });
+
+  show(fromHash() || firstId, false);
 })();
 </script>
 </body>
