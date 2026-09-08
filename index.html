@@ -14,6 +14,8 @@
 <script>
 const SHOP = {
   name:        "Caramellas",
+
+  // Shown in the shop section at the bottom, under "Visit the shop".
   tagline:     "Cakes and pastries, baked fresh every morning.",
 
   // The line under the shop name. Every cake is eggless, so it is
@@ -127,6 +129,7 @@ const MENU = [
     --caramel:#C67A2C; --caramel-dark:#B5691E; --tint:#F0E0C8;
     --espresso:#1C1009; --muted:#9E7E5A; --border:#DDD0BE;
     --card:#FDFAF6; --cream:#F5EFE6;
+    --btn-line:#A85F16; --lede:#8C7358; --hairline:#E3D8C8;
     --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   }
@@ -148,10 +151,14 @@ const MENU = [
     font-weight:400; letter-spacing:.01em; margin:0;
   }
   .eggless{
-    margin:18px 0 0; font-size:12.5px; letter-spacing:.06em;
-    color:var(--caramel-dark);
+    margin:18px auto 0; max-width:32ch;
+    font-family:var(--serif); font-style:italic; font-size:16px;
+    color:var(--lede);
   }
-  .tagline{margin:10px auto 0; max-width:32ch; color:var(--muted); font-size:14.5px}
+  .rule{
+    width:40px; height:1px; border:0; margin:26px auto 0;
+    background:var(--hairline);
+  }
 
   /* ---- category bar ---- */
   .cats{
@@ -215,14 +222,17 @@ const MENU = [
   /* ---- order button ---- */
   .order{
     display:inline-block; margin-top:16px;
-    padding:0 20px; min-height:44px; line-height:44px;
+    padding:0 20px; min-height:44px; line-height:42px;
     text-align:center; text-decoration:none;
     font-family:inherit; font-size:14px; font-weight:600; letter-spacing:.03em;
-    color:var(--cream); background:var(--espresso);
-    border:0; border-radius:2px; cursor:pointer;
+    color:var(--btn-line); background:transparent;
+    border:1px solid var(--btn-line); border-radius:999px; cursor:pointer;
   }
   .order:active{opacity:.82}
-  .item-featured .order{display:block; width:100%}
+  .item-featured .order{
+    display:block; width:100%;
+    color:var(--cream); background:var(--caramel); border-color:var(--caramel);
+  }
   .counter{margin:14px 0 0; color:var(--muted); font-size:13px}
 
   /* ---- shop info ---- */
@@ -241,6 +251,7 @@ const MENU = [
   .row:last-of-type{border-bottom:0}
   .row span:first-child{color:var(--muted)}
   .row span:last-child{text-align:right}
+  .shop-tagline{margin:0 0 12px; color:var(--muted); font-size:15px}
   .addr{font-size:15px; margin:0 0 6px}
   .links{margin:16px 0 24px; font-size:15px}
   .links a{color:var(--caramel-dark); text-decoration:none; border-bottom:1px solid var(--tint)}
@@ -261,7 +272,7 @@ const MENU = [
 <header class="top wrap">
   <h1 class="brand" id="brand"></h1>
   <p class="eggless" id="eggless"></p>
-  <p class="tagline" id="tagline"></p>
+  <hr class="rule">
 </header>
 
 <nav class="cats"><div class="cats-inner" id="cats"></div></nav>
@@ -271,6 +282,7 @@ const MENU = [
 <section class="wrap">
   <div class="about">
     <h2>Visit the shop</h2>
+    <p class="shop-tagline" id="tagline"></p>
     <p class="addr" id="addr"></p>
     <p class="links">
       <a id="maps" href="#" target="_blank" rel="noopener">Get directions</a>
@@ -299,7 +311,7 @@ const MENU = [
 
   document.getElementById("brand").textContent = SHOP.name;
   document.getElementById("eggless").textContent = SHOP.eggless || "";
-  document.getElementById("tagline").textContent = SHOP.tagline;
+  document.getElementById("tagline").textContent = SHOP.tagline || "";
   document.getElementById("addr").textContent = SHOP.address;
   document.getElementById("maps").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(SHOP.mapsQuery);
   var tel = document.getElementById("tel");
