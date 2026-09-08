@@ -134,6 +134,7 @@ const MENU = [
     --espresso:#1C1009; --muted:#9E7E5A; --border:#DDD0BE;
     --card:#FDFAF6; --cream:#F5EFE6;
     --btn-line:#A85F16; --lede:#8C7358; --hairline:#E3D8C8;
+    --rule-strong:#C9B79E;
     --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   }
@@ -193,6 +194,12 @@ const MENU = [
   }
   .item{padding:24px 0; border-bottom:1px solid var(--border)}
   .cat .item:last-child{border-bottom:0}
+
+  /* Where a category's photographs end and its plain rows begin. Quiet on
+     purpose — the point is only that a row is not read as a caption to the
+     picture above it. */
+  .item.last-photo{border-bottom-color:var(--rule-strong)}
+  .item.after-photos{padding-top:46px}
 
   .shot{
     position:relative; aspect-ratio:4/5; overflow:hidden;
@@ -394,6 +401,15 @@ const MENU = [
     var uniform = isUniform(groups[c]);
     var sharedPrices = uniform ? groups[c][0].prices : null;
 
+    // Photographed items first, then the plain rows, each group in the order
+    // it was written. Interleaved, a row sitting under a photo card reads as
+    // a caption to that photo, and someone can order the wrong cake off it.
+    // Done here rather than in the list, so the grouping keeps itself right
+    // as items are photographed later.
+    var shots = groups[c].filter(function (it) { return it.featured; });
+    var plain = groups[c].filter(function (it) { return !it.featured; });
+    var items = shots.concat(plain);
+
     return '<section class="cat" id="' + slug(c) + '">' +
       '<h2 class="cat-head">' + esc(c) + '</h2>' +
       (uniform
@@ -402,7 +418,9 @@ const MENU = [
           }).join(" \u00b7 ") + '</p>'
         : '') +
       '<div class="items">' +
-      groups[c].map(function (it) {
+      items.map(function (it, at) {
+        var lastPhoto  = shots.length > 0 && at === shots.length - 1 && plain.length > 0;
+        var afterPhoto = shots.length > 0 && at === shots.length;
         var n = flat.length;
         flat.push(it);
         chosen.push(0);
@@ -471,7 +489,9 @@ const MENU = [
         }
 
         return '<article class="item' + (it.featured ? ' item-featured' : '') +
-               (tapRow ? ' item-tap' : '') + '" data-i="' + n + '">' +
+               (tapRow ? ' item-tap' : '') +
+               (lastPhoto ? ' last-photo' : '') + (afterPhoto ? ' after-photos' : '') +
+               '" data-i="' + n + '">' +
                  rowLink + photo + head +
                  (it.featured && it.desc ? '<p class="desc">' + esc(it.desc) + '</p>' : '') +
                  sizes + action +
