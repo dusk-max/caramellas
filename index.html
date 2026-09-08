@@ -80,43 +80,45 @@ const SHOP = {
 //                    back to the drawn placeholder on its own.
 const MENU = [
 
-  { category: "Signature cakes",
-    name: "Belgian chocolate truffle",
-    desc: "Dark chocolate sponge, ganache, cocoa dust.",
-    prices: [["250 g","320"], ["500 g","600"], ["1 kg","1150"]],
-    tag: "Bestseller" },
+  { category: "Signature cakes", name: "Hazelnut",               prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Signature cakes", name: "Red Velvet",             prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Signature cakes", name: "Red Heart (Rasmalai)",   prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Signature cakes", name: "Cassatta",               prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Signature cakes", name: "Rose Litchi",            prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Signature cakes", name: "Kaju Katli",             prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Signature cakes", name: "Premium Rasmalai",       prices: [["500 g","430"], ["1 kg","850"]] },
+  { category: "Signature cakes", name: "Triple Mousse",          prices: [["500 g","500"]] },
+  { category: "Signature cakes", name: "Belgium Chocolate",      prices: [["500 g","500"]] },
+  { category: "Signature cakes", name: "Kunafa Chocolate",       prices: [["500 g","500"]] },
 
-  { category: "Signature cakes",
-    name: "Red velvet cream cheese",
-    desc: "Buttermilk sponge with real cream cheese frosting.",
-    prices: [["500 g","820"], ["1 kg","1550"]] },
+  { category: "Premium", name: "Rasmalai Delight",       prices: [["500 g","550"], ["1 kg","1100"]] },
+  { category: "Premium", name: "Mawa Gulab Jamun",       prices: [["500 g","550"], ["1 kg","1100"]] },
+  { category: "Premium", name: "Fruit Crunch",           prices: [["500 g","550"], ["1 kg","1100"]] },
+  { category: "Premium", name: "Nutty Caramel",          prices: [["500 g","550"], ["1 kg","1100"]] },
 
-  { category: "Premium",
-    name: "Blueberry cheesecake",
-    desc: "Baked cheesecake, biscuit base, blueberry glaze.",
-    prices: [["500 g","950"], ["1 kg","1800"]] },
+  { category: "Classic cakes", name: "Choco Delice",           prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Crunchy Chocolate",      prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Choco Marble",           prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Choco Oreo",             prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Milky Chocolate",        prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Truffle",                prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Heart Truffle",          prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Black and White Forest", prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "White Forest",           prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Pineapple",              prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Pista Rasmalai",         prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Blueberry",              prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Strawberry",             prices: [["500 g","380"], ["1 kg","750"]] },
+  { category: "Classic cakes", name: "Rose Petal",             prices: [["500 g","380"], ["1 kg","750"]] },
 
-  { category: "Classic cakes",
-    name: "Fresh pineapple gateau",
-    desc: "Vanilla sponge, whipped cream, pineapple compote.",
-    prices: [["250 g","280"], ["500 g","520"], ["1 kg","990"]] },
+  { category: "Pastries", name: "Rasmalai pastry",        prices: [["per piece","40"]] },
+  { category: "Pastries", name: "Pineapple pastry",       prices: [["per piece","40"]] },
+  { category: "Pastries", name: "Red Velvet pastry",      prices: [["per piece","40"]] },
+  { category: "Pastries", name: "Black Forest pastry",    prices: [["per piece","40"]] },
+  { category: "Pastries", name: "Mousse pastry",          prices: [["per piece","60"]] },
 
-  { category: "Classic cakes",
-    name: "Banana walnut loaf",
-    desc: "No refined sugar. Keeps for three days.",
-    prices: [["whole loaf","380"]] },
-
-  { category: "Pastries",
-    name: "Chocolate pastry",
-    prices: [["per piece","90"]] },
-
-  { category: "Pastries",
-    name: "Butter croissant",
-    prices: [["per piece","80"]] },
-
-  { category: "Pastries",
-    name: "Belgian chocolate chip cookies",
-    prices: [["box of 6","260"]] },
+  { category: "Other bakes", name: "Brownie",                prices: [["per piece","70"]] },
+  { category: "Other bakes", name: "Choco Bomb",             prices: [["per piece","20"]] },
 
 ];
 </script>
@@ -209,6 +211,8 @@ const MENU = [
   .item-featured .price{font-size:21px}
 
   /* ---- size chips ---- */
+  .cat-prices{margin:0 0 4px; font-size:13.5px; color:var(--muted)}
+
   .sizes{display:flex; flex-wrap:wrap; gap:7px; margin-top:14px}
   .chip{
     font-family:inherit; font-size:13px; line-height:1;
@@ -218,6 +222,31 @@ const MENU = [
     cursor:pointer; white-space:nowrap;
   }
   .chip.is-on{background:var(--espresso); border-color:var(--espresso); color:var(--cream)}
+
+  /* A row in a uniform category is itself the link. The anchor is laid over
+     the whole row rather than wrapped around it — an <a> may not contain
+     <button>, and stacking it this way also puts the size toggle physically
+     above the link, so a tap on the toggle never reaches it. */
+  .item-tap{position:relative}
+  .row-link{position:absolute; top:0; right:0; bottom:0; left:0; z-index:1}
+  .item-tap .sizes-plain{position:relative; z-index:2; align-self:flex-start}
+  .item-tap:active{background:rgba(198,122,44,.06)}
+  .chev{
+    color:var(--caramel); font-size:20px; line-height:1;
+    padding-left:12px; flex:0 0 auto;
+  }
+  .row-link:focus-visible{outline:2px solid var(--caramel); outline-offset:-3px}
+
+  /* the lighter size choice used where the category already states prices */
+  .sizes-plain{display:flex; align-items:center; gap:14px; margin-top:10px}
+  .opt{
+    font-family:inherit; font-size:13px; line-height:1;
+    padding:9px 6px; min-height:36px;
+    background:none; border:0; border-bottom:1px solid transparent;
+    color:var(--muted); cursor:pointer;
+  }
+  .opt.is-on{color:var(--espresso); border-bottom-color:var(--caramel)}
+  .sizes-plain .sep{color:var(--border); font-size:13px}
 
   /* ---- order button ---- */
   .order{
@@ -355,9 +384,28 @@ const MENU = [
   // featured and compact items the list happens to be in.
   var shown = 0;
 
+  // A category whose items all cost exactly the same states its prices once,
+  // under the heading, and its rows then carry only a name and a size choice.
+  // Fourteen Classic cakes at the same two numbers was fourteen repetitions of
+  // those numbers. Detected from the data — there is no flag to set or forget.
+  var priceKey = function (it) { return JSON.stringify(it.prices || []); };
+  var isUniform = function (list) {
+    return list.length > 1 && list.every(function (it) {
+      return priceKey(it) === priceKey(list[0]);
+    });
+  };
+
   document.getElementById("menu").innerHTML = order.map(function (c) {
+    var uniform = isUniform(groups[c]);
+    var sharedPrices = uniform ? groups[c][0].prices : null;
+
     return '<section class="cat" id="' + slug(c) + '">' +
       '<h2 class="cat-head">' + esc(c) + '</h2>' +
+      (uniform
+        ? '<p class="cat-prices">' + sharedPrices.map(function (pr) {
+            return esc(pr[0]) + ' ₹' + esc(pr[1]);
+          }).join(" \u00b7 ") + '</p>'
+        : '') +
       '<div class="items">' +
       groups[c].map(function (it) {
         var n = flat.length;
@@ -366,23 +414,56 @@ const MENU = [
 
         var multi = it.prices && it.prices.length > 1;
 
+        // A featured card is the one item being shown off, so it keeps its own
+        // price and chips even where the category states them.
+        var quiet = uniform && !it.featured;
+
+        // A quiet row carries no button: the row is the link, and the chevron
+        // is what says so. An item nobody can order stays plain text.
+        var tapRow = quiet && !it.noOrder;
+
         var head = '<div class="line">' +
                    '<h3 class="name">' + esc(it.name) + '</h3>' +
-                   '<span class="price">₹' + esc(priceOf(it, 0)) + '</span></div>' +
+                   (quiet ? '' : '<span class="price">₹' + esc(priceOf(it, 0)) + '</span>') +
+                   (tapRow ? '<span class="chev" aria-hidden="true">\u203a</span>' : '') +
+                   '</div>' +
                    (it.tag ? '<div class="tag">' + esc(it.tag) + '</div>' : '');
 
-        var sizes = multi
-          ? '<div class="sizes">' + it.prices.map(function (p, i) {
-              return '<button type="button" class="chip' + (i === 0 ? ' is-on' : '') +
-                     '" data-s="' + i + '" aria-pressed="' + (i === 0 ? 'true' : 'false') +
-                     '">' + esc(p[0]) + '</button>';
-            }).join("") + '</div>'
-          : (sizeOf(it, 0) ? '<div class="single">' + esc(sizeOf(it, 0)) + '</div>' : '');
+        var sizes;
+        if (quiet) {
+          // Prices are stated above, so the choice shows sizes alone. It still
+          // has to exist: it decides the size the message names. A single-size
+          // item needs no control at all.
+          sizes = multi
+            ? '<div class="sizes-plain">' + it.prices.map(function (p, i) {
+                return (i ? '<span class="sep">/</span>' : '') +
+                       '<button type="button" class="pick opt' + (i === 0 ? ' is-on' : '') +
+                       '" data-s="' + i + '" aria-pressed="' + (i === 0 ? 'true' : 'false') +
+                       '">' + esc(p[0]) + '</button>';
+              }).join("") + '</div>'
+            : '';
+        } else {
+          sizes = multi
+            ? '<div class="sizes">' + it.prices.map(function (p, i) {
+                return '<button type="button" class="pick chip' + (i === 0 ? ' is-on' : '') +
+                       '" data-s="' + i + '" aria-pressed="' + (i === 0 ? 'true' : 'false') +
+                       '">' + esc(p[0]) + '</button>';
+              }).join("") + '</div>'
+            : (sizeOf(it, 0) ? '<div class="single">' + esc(sizeOf(it, 0)) + '</div>' : '');
+        }
 
-        var action = it.noOrder
-          ? '<p class="counter">' + esc(SHOP.counterNote || "Available at the counter") + '</p>'
-          : '<a class="order" href="' + esc(wa(message(it, 0))) +
-            '" target="_blank" rel="noopener">Order on WhatsApp</a>';
+        var action, rowLink = "";
+        if (it.noOrder) {
+          action = '<p class="counter">' + esc(SHOP.counterNote || "Available at the counter") + '</p>';
+        } else if (tapRow) {
+          action = "";
+          rowLink = '<a class="row-link" href="' + esc(wa(message(it, 0))) +
+                    '" target="_blank" rel="noopener" aria-label="Order ' +
+                    esc(it.name) + ' on WhatsApp"></a>';
+        } else {
+          action = '<a class="order" href="' + esc(wa(message(it, 0))) +
+                   '" target="_blank" rel="noopener">Order on WhatsApp</a>';
+        }
 
         var photo = "";
         if (it.featured) {
@@ -396,8 +477,8 @@ const MENU = [
         }
 
         return '<article class="item' + (it.featured ? ' item-featured' : '') +
-               '" data-i="' + n + '">' +
-                 photo + head +
+               (tapRow ? ' item-tap' : '') + '" data-i="' + n + '">' +
+                 rowLink + photo + head +
                  (it.featured && it.desc ? '<p class="desc">' + esc(it.desc) + '</p>' : '') +
                  sizes + action +
                '</article>';
@@ -407,20 +488,26 @@ const MENU = [
 
   // ---- tapping a size chip repoints both the price and the link ----
   document.getElementById("menu").addEventListener("click", function (e) {
-    var chip = e.target.closest && e.target.closest(".chip");
-    if (!chip) return;
-    var art = chip.closest(".item");
+    var pick = e.target.closest && e.target.closest(".pick");
+    if (!pick) return;
+    // The toggle sits above the row link, so a tap here is not the row's tap.
+    // Belt and braces in case the two are ever nested the other way round.
+    e.preventDefault();
+    e.stopPropagation();
+    var art = pick.closest(".item");
     var it = flat[+art.getAttribute("data-i")];
-    var i = +chip.getAttribute("data-s");
+    var i = +pick.getAttribute("data-s");
     if (!it) return;
 
-    Array.prototype.forEach.call(art.querySelectorAll(".chip"), function (c) {
-      var on = c === chip;
+    Array.prototype.forEach.call(art.querySelectorAll(".pick"), function (c) {
+      var on = c === pick;
       c.classList.toggle("is-on", on);
       c.setAttribute("aria-pressed", on ? "true" : "false");
     });
-    art.querySelector(".price").textContent = "₹" + priceOf(it, i);
-    var a = art.querySelector("a.order");
+    // Rows in a uniform category have no price of their own to update.
+    var priceEl = art.querySelector(".price");
+    if (priceEl) priceEl.textContent = "₹" + priceOf(it, i);
+    var a = art.querySelector("a.order") || art.querySelector("a.row-link");
     if (a) a.href = wa(message(it, i));
   });
 
