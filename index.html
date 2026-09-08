@@ -42,6 +42,10 @@ const SHOP = {
 
   // Shown instead of an order button on items marked  noOrder: true
   counterNote: "Available at the counter",
+
+  // Added under the total in the WhatsApp message. The total is worked out
+  // on the page, so it is indicative until the shop confirms it.
+  totalNote:   "Please confirm final amount with us.",
 };
 
 // One entry per product. Copy a block, change the words, done.
@@ -139,6 +143,9 @@ const MENU = [
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   }
   *{box-sizing:border-box}
+  /* A display rule of our own outranks the browser's [hidden] on equal
+     specificity, so hiding by attribute has to be made to stick. */
+  [hidden]{display:none !important}
   html{-webkit-text-size-adjust:100%}
   body{
     margin:0; background:var(--cream); color:var(--espresso);
@@ -228,7 +235,11 @@ const MENU = [
      <button>, and stacking it this way also puts the size toggle physically
      above the link, so a tap on the toggle never reaches it. */
   .item-tap{position:relative}
-  .row-link{position:absolute; top:0; right:0; bottom:0; left:0; z-index:1}
+  .row-add{
+    position:absolute; top:0; right:0; bottom:0; left:0; z-index:1;
+    background:none; border:0; padding:0; font:inherit; color:inherit;
+    cursor:pointer;
+  }
   .item-tap .sizes{position:relative; z-index:2; align-self:flex-start}
   .item-tap:active{background:rgba(198,122,44,.06)}
   .line-end{display:flex; align-items:baseline; flex:0 0 auto}
@@ -236,7 +247,7 @@ const MENU = [
     color:var(--caramel); font-size:20px; line-height:1;
     padding-left:12px; flex:0 0 auto;
   }
-  .row-link:focus-visible{outline:2px solid var(--caramel); outline-offset:-3px}
+  .row-add:focus-visible{outline:2px solid var(--caramel); outline-offset:-3px}
 
   /* The one size control on the page — same in every category, on a
      featured card as on a compact row. */
@@ -265,6 +276,53 @@ const MENU = [
     color:var(--cream); background:var(--caramel); border-color:var(--caramel);
   }
   .counter{margin:14px 0 0; color:var(--muted); font-size:13px}
+
+  /* ---- an item once it is on the order list ---- */
+  .added{
+    display:flex; align-items:center; gap:12px; margin-top:14px;
+    position:relative; z-index:2;              /* above the row control */
+  }
+  .added-note{font-size:13px; color:var(--btn-line); letter-spacing:.04em}
+  /* a featured card already says "Added" on its button */
+  .item-featured .added-note{display:none}
+  .qty{display:flex; align-items:center; gap:4px}
+  .qbtn{
+    font-family:inherit; font-size:16px; line-height:1;
+    width:34px; height:34px; padding:0;
+    background:none; color:var(--espresso);
+    border:1px solid var(--border); border-radius:999px; cursor:pointer;
+  }
+  .qbtn[disabled]{color:var(--border); cursor:default}
+  .qn{min-width:22px; text-align:center; font-size:14px}
+  .rm{
+    margin-left:auto; width:34px; height:34px; padding:0;
+    font-family:inherit; font-size:18px; line-height:1;
+    background:none; border:0; color:var(--muted); cursor:pointer;
+  }
+  .item.is-added{background:rgba(198,122,44,.05)}
+  .item.is-added .chev{color:var(--btn-line)}
+
+  /* ---- the order bar ---- */
+  .bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:20;
+    background:var(--card); border-top:1px solid var(--rule-strong);
+  }
+  .bar-inner{
+    max-width:560px; margin:0 auto;
+    padding:12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+  }
+  .bar-sum{font-size:14px; white-space:nowrap}
+  .bar-btn{
+    flex:0 0 auto; display:inline-block; text-decoration:none; text-align:center;
+    padding:0 20px; min-height:44px; line-height:44px;
+    font-family:inherit; font-size:14px; font-weight:600; letter-spacing:.03em;
+    color:var(--cream); background:var(--caramel);
+    border:1px solid var(--caramel); border-radius:999px;
+  }
+  .bar-btn:active{opacity:.85}
+  /* so the bar never sits on top of the last row */
+  body.has-order{padding-bottom:88px}
 
   /* ---- shop info ---- */
   .about{
@@ -328,6 +386,13 @@ const MENU = [
 
 <footer id="foot"></footer>
 
+<div class="bar" id="bar" hidden>
+  <div class="bar-inner">
+    <span class="bar-sum" id="barSum"></span>
+    <a class="bar-btn" id="barBtn" href="#" target="_blank" rel="noopener">Order on WhatsApp</a>
+  </div>
+</div>
+
 <script>
 (function () {
   var wa = function (text) {
@@ -351,7 +416,7 @@ const MENU = [
   document.getElementById("hours").innerHTML = SHOP.hours.map(function (h) {
     return '<div class="row"><span>' + esc(h[0]) + '</span><span>' + esc(h[1]) + '</span></div>';
   }).join("");
-  document.getElementById("general").href = wa("Hi " + SHOP.name + "! I'd like to place an order.");
+  document.getElementById("general").href = wa(GENERAL);
   document.getElementById("note").textContent = SHOP.orderNote || "";
   document.getElementById("foot").textContent = SHOP.name + " · " + new Date().getFullYear();
 
@@ -361,13 +426,11 @@ const MENU = [
   var sizeOf  = function (it, i) { return (it.prices[i] || [])[0] || ""; };
   var priceOf = function (it, i) { return (it.prices[i] || [])[1] || ""; };
 
-  // The message names the size, so an order for a 1 kg cake cannot be
-  // read as an order for a 250 g one.
-  var message = function (it, i) {
-    var sz = sizeOf(it, i);
-    return "Hi " + SHOP.name + "! I'd like to order:\n\n• " + it.name +
-           (sz ? " — " + sz : "") + " — ₹" + priceOf(it, i) +
-           "\n\nQuantity:\nName:\nPickup or delivery:\nNeeded by:";
+  var GENERAL = "Hi " + SHOP.name + "! I'd like to place an order.";
+
+  // Indian digit grouping where the browser has it, plain digits where not.
+  var money = function (v) {
+    try { return v.toLocaleString("en-IN"); } catch (e) { return String(v); }
   };
 
   // group items by category, keeping the order they appear in the list above
@@ -464,17 +527,29 @@ const MENU = [
               ? ''
               : '<div class="single">' + esc(sizeOf(it, 0)) + '</div>');
 
+        // Every control here only edits the list on the page. Nothing opens
+        // WhatsApp until the bar at the foot is tapped, so an order arrives
+        // as one message rather than one per cake.
+        var addedBlock =
+          '<div class="added" hidden>' +
+            '<span class="added-note">Added</span>' +
+            '<span class="qty">' +
+              '<button type="button" class="qbtn" data-q="-1" aria-label="Fewer ' + esc(it.name) + '">\u2212</button>' +
+              '<span class="qn">1</span>' +
+              '<button type="button" class="qbtn" data-q="1" aria-label="More ' + esc(it.name) + '">+</button>' +
+            '</span>' +
+            '<button type="button" class="rm" aria-label="Remove ' + esc(it.name) + ' from your order">\u00d7</button>' +
+          '</div>';
+
         var action, rowLink = "";
         if (it.noOrder) {
           action = '<p class="counter">' + esc(SHOP.counterNote || "Available at the counter") + '</p>';
         } else if (tapRow) {
-          action = "";
-          rowLink = '<a class="row-link" href="' + esc(wa(message(it, 0))) +
-                    '" target="_blank" rel="noopener" aria-label="Order ' +
-                    esc(it.name) + ' on WhatsApp"></a>';
+          action = addedBlock;
+          rowLink = '<button type="button" class="row-add" aria-label="Add ' +
+                    esc(it.name) + ' to your order"></button>';
         } else {
-          action = '<a class="order" href="' + esc(wa(message(it, 0))) +
-                   '" target="_blank" rel="noopener">Order on WhatsApp</a>';
+          action = '<button type="button" class="order add-btn">Add to order</button>' + addedBlock;
         }
 
         var photo = "";
@@ -500,30 +575,135 @@ const MENU = [
       '</div></section>';
   }).join("");
 
-  // ---- tapping a size repoints both the price and the link ----
-  document.getElementById("menu").addEventListener("click", function (e) {
-    var pick = e.target.closest && e.target.closest(".pick");
-    if (!pick) return;
-    // The toggle sits above the row link, so a tap here is not the row's tap.
-    // Belt and braces in case the two are ever nested the other way round.
-    e.preventDefault();
-    e.stopPropagation();
-    var art = pick.closest(".item");
-    var it = flat[+art.getAttribute("data-i")];
-    var i = +pick.getAttribute("data-s");
-    if (!it) return;
+  // ---- the order list -----------------------------------------------
+  // Held here and nowhere else: no storage, no server. Closing the tab loses
+  // it, which is the trade for a page that stays one file.
+  var cart = [];                      // [{n, size, qty}], in the order added
+  var bar    = document.getElementById("bar");
+  var barSum = document.getElementById("barSum");
+  var barBtn = document.getElementById("barBtn");
 
-    Array.prototype.forEach.call(art.querySelectorAll(".pick"), function (c) {
-      var on = c === pick;
-      c.classList.toggle("is-on", on);
-      c.setAttribute("aria-pressed", on ? "true" : "false");
+  var at = function (n) {
+    for (var i = 0; i < cart.length; i++) if (cart[i].n === n) return i;
+    return -1;
+  };
+  var chosenSize = function (art) {
+    var on = art.querySelector(".pick.is-on");
+    return on ? +on.getAttribute("data-s") : 0;
+  };
+  var lineTotal = function (e) {
+    return (parseInt(priceOf(flat[e.n], e.size), 10) || 0) * e.qty;
+  };
+
+  var compose = function () {
+    var lines = cart.map(function (e) {
+      var it = flat[e.n], sz = sizeOf(it, e.size);
+      return "- " + it.name + (sz ? " — " + sz : "") +
+             " — ₹" + priceOf(it, e.size) + " \u00d7 " + e.qty;
     });
-    // Rows in a uniform category have no price of their own to update.
-    var priceEl = art.querySelector(".price");
-    if (priceEl) priceEl.textContent = "₹" + priceOf(it, i);
-    var a = art.querySelector("a.order") || art.querySelector("a.row-link");
-    if (a) a.href = wa(message(it, i));
+    var total = cart.reduce(function (t, e) { return t + lineTotal(e); }, 0);
+    return "Hi " + SHOP.name + "! I'd like to order:\n\n" +
+           lines.join("\n") +
+           "\n\nTotal: ₹" + money(total) +
+           (SHOP.totalNote ? "\n" + SHOP.totalNote : "") +
+           "\n\nName:\nPickup or delivery:\nNeeded by:";
+  };
+
+  var syncItem = function (art) {
+    var n = +art.getAttribute("data-i");
+    var i = at(n), on = i >= 0;
+    var name = art.querySelector(".name").textContent;
+    art.classList.toggle("is-added", on);
+
+    var block = art.querySelector(".added");
+    if (block) block.hidden = !on;
+
+    var chev = art.querySelector(".chev");
+    if (chev) chev.textContent = on ? "\u2713" : "\u203a";
+
+    var btn = art.querySelector(".add-btn");
+    if (btn) btn.textContent = on ? "Added" : "Add to order";
+
+    var row = art.querySelector(".row-add");
+    if (row) row.setAttribute("aria-label",
+      on ? "Remove " + name + " from your order" : "Add " + name + " to your order");
+
+    if (on) {
+      var qn = art.querySelector(".qn");
+      if (qn) qn.textContent = cart[i].qty;
+      var minus = art.querySelector('.qbtn[data-q="-1"]');
+      if (minus) minus.disabled = (cart[i].qty <= 1);
+    }
+  };
+
+  var syncBar = function () {
+    var units = 0, total = 0;
+    cart.forEach(function (e) { units += e.qty; total += lineTotal(e); });
+    var any = cart.length > 0;
+    bar.hidden = !any;
+    document.body.classList.toggle("has-order", any);
+    if (any) {
+      barSum.textContent = units + (units === 1 ? " item" : " items") +
+                           " \u00b7 ₹" + money(total);
+      barBtn.href = wa(compose());
+    }
+    // the shop card's button sends the list too, so someone who scrolls past
+    // the bar and taps that one instead does not lose what they picked
+    document.getElementById("general").href = wa(any ? compose() : GENERAL);
+  };
+
+  var toggle = function (art) {
+    var n = +art.getAttribute("data-i"), i = at(n);
+    if (i >= 0) cart.splice(i, 1);
+    else cart.push({ n: n, size: chosenSize(art), qty: 1 });
+    syncItem(art); syncBar();
+  };
+
+  document.getElementById("menu").addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t.closest) return;
+
+    // size: sits above the row control, so this is never the row's own tap
+    var pick = t.closest(".pick");
+    if (pick) {
+      e.preventDefault(); e.stopPropagation();
+      var art = pick.closest(".item");
+      var n = +art.getAttribute("data-i"), it = flat[n], i = +pick.getAttribute("data-s");
+      if (!it) return;
+      Array.prototype.forEach.call(art.querySelectorAll(".pick"), function (c) {
+        var on = c === pick;
+        c.classList.toggle("is-on", on);
+        c.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      var priceEl = art.querySelector(".price");
+      if (priceEl) priceEl.textContent = "₹" + priceOf(it, i);
+      var k = at(n);
+      if (k >= 0) { cart[k].size = i; syncBar(); }   // already listed: follow it
+      return;
+    }
+
+    var q = t.closest(".qbtn");
+    if (q) {
+      e.preventDefault(); e.stopPropagation();
+      var a2 = q.closest(".item"), k2 = at(+a2.getAttribute("data-i"));
+      if (k2 < 0) return;
+      cart[k2].qty = Math.max(1, Math.min(99, cart[k2].qty + (+q.getAttribute("data-q"))));
+      syncItem(a2); syncBar();
+      return;
+    }
+
+    var rm = t.closest(".rm");
+    if (rm) {
+      e.preventDefault(); e.stopPropagation();
+      toggle(rm.closest(".item"));
+      return;
+    }
+
+    var hit = t.closest(".row-add, .add-btn");
+    if (hit) { e.preventDefault(); toggle(hit.closest(".item")); }
   });
+
+  syncBar();
 
   // ---- the nav is a tab bar: one category on screen at a time ----
   // Nothing here has to work out what is being looked at any more, because
