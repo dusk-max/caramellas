@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caramellas — Cakes, Pastries &amp; Coffee</title>
-<meta name="description" content="Fresh cakes, pastries and coffee, baked daily. Order on WhatsApp for pickup or delivery.">
+<title>Caramellas — Eggless Cakes &amp; Pastries</title>
+<meta name="description" content="Eggless cakes and pastries, baked fresh every morning. Order on WhatsApp for pickup or delivery.">
 <meta name="theme-color" content="#F5EFE6">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>%F0%9F%8E%82</text></svg>">
 
@@ -14,7 +14,11 @@
 <script>
 const SHOP = {
   name:        "Caramellas",
-  tagline:     "Cakes, pastries and coffee. Baked fresh every morning.",
+  tagline:     "Cakes and pastries, baked fresh every morning.",
+
+  // The line under the shop name. Every cake is eggless, so it is
+  // said once here rather than on each item.
+  eggless:     "Every cake we bake is eggless.",
 
   // Your WhatsApp number: country code + number, digits only, no + or spaces.
   whatsapp:    "919710111010",
@@ -32,7 +36,7 @@ const SHOP = {
   ],
 
   // Line shown under the order button. Delete the text to hide it.
-  orderNote:   "Custom cakes need 24 hours' notice. Eggless on request.",
+  orderNote:   "Custom cakes need 24 hours' notice.",
 
   // Shown instead of an order button on items marked  noOrder: true
   counterNote: "Available at the counter",
@@ -40,15 +44,28 @@ const SHOP = {
 
 // One entry per product. Copy a block, change the words, done.
 //
+//   prices:          The sizes this cake is sold in, cheapest first, as
+//                    pairs of [size, price]:
+//                        prices: [["250 g","320"], ["500 g","600"], ["1 kg","1150"]]
+//                    They appear as tappable chips; the first is selected
+//                    and its price is the one shown. Tapping a chip changes
+//                    the price AND the size named in the WhatsApp message.
+//                    A cake sold in one size only is ONE entry with one
+//                    pair — never a separate entry per weight:
+//                        prices: [["per piece","90"]]
+//
 //   featured: true   Big photo card. Leave the line out and the item is a
-//                    compact row instead: name, price, unit, order button,
-//                    no photo. Only feature a handful — photos are the
-//                    slowest part of the page on a phone connection.
+//                    compact row instead: name, price, sizes and the order
+//                    button, no photo. Only feature a handful — photos are
+//                    the slowest part of the page on a phone connection.
 //
 //   noOrder:  true   No order button. Shows SHOP.counterNote instead.
 //                    Use it for things you don't take orders for.
 //
-//   tag:             Optional small label. Delete the line if unused.
+//   tag:             Optional small line under the name, e.g. "Bestseller".
+//                    Delete the line if unused.
+//
+//   desc:            Optional. Shown on featured cards only.
 //
 //   photo:           Optional, and only used by featured items. By default
 //                    the picture is looked for at
@@ -64,54 +81,40 @@ const MENU = [
   { category: "Signature cakes",
     name: "Belgian chocolate truffle",
     desc: "Dark chocolate sponge, ganache, cocoa dust.",
-    price: "750", unit: "500 g",
+    prices: [["250 g","320"], ["500 g","600"], ["1 kg","1150"]],
     tag: "Bestseller" },
 
   { category: "Signature cakes",
     name: "Red velvet cream cheese",
     desc: "Buttermilk sponge with real cream cheese frosting.",
-    price: "820", unit: "500 g" },
+    prices: [["500 g","820"], ["1 kg","1550"]] },
 
-  { category: "Signature cakes",
+  { category: "Premium",
+    name: "Blueberry cheesecake",
+    desc: "Baked cheesecake, biscuit base, blueberry glaze.",
+    prices: [["500 g","950"], ["1 kg","1800"]] },
+
+  { category: "Classic cakes",
     name: "Fresh pineapple gateau",
     desc: "Vanilla sponge, whipped cream, pineapple compote.",
-    price: "650", unit: "500 g",
-    tag: "Eggless available" },
+    prices: [["250 g","280"], ["500 g","520"], ["1 kg","990"]] },
+
+  { category: "Classic cakes",
+    name: "Banana walnut loaf",
+    desc: "No refined sugar. Keeps for three days.",
+    prices: [["whole loaf","380"]] },
 
   { category: "Pastries",
     name: "Chocolate pastry",
-    desc: "A single slice of the truffle cake.",
-    price: "90", unit: "per piece" },
-
-  { category: "Pastries",
-    name: "Blueberry cheesecake slice",
-    desc: "Baked cheesecake, biscuit base, blueberry glaze.",
-    price: "140", unit: "per piece" },
+    prices: [["per piece","90"]] },
 
   { category: "Pastries",
     name: "Butter croissant",
-    desc: "Laminated overnight, baked at 6 am.",
-    price: "80", unit: "per piece" },
+    prices: [["per piece","80"]] },
 
-  { category: "Cookies & bakes",
+  { category: "Pastries",
     name: "Belgian chocolate chip cookies",
-    desc: "Soft centre, crisp edge. Box of six.",
-    price: "260", unit: "box of 6" },
-
-  { category: "Cookies & bakes",
-    name: "Banana walnut loaf",
-    desc: "No refined sugar. Keeps for three days.",
-    price: "380", unit: "whole loaf" },
-
-  { category: "Coffee & drinks",
-    name: "Filter coffee",
-    desc: "Chikmagalur beans, brewed strong.",
-    price: "70", unit: "per cup" },
-
-  { category: "Coffee & drinks",
-    name: "Iced caramel latte",
-    desc: "Double shot, house caramel, cold milk.",
-    price: "180", unit: "regular" },
+    prices: [["box of 6","260"]] },
 
 ];
 </script>
@@ -123,7 +126,7 @@ const MENU = [
   :root{
     --caramel:#C67A2C; --caramel-dark:#B5691E; --tint:#F0E0C8;
     --espresso:#1C1009; --muted:#9E7E5A; --border:#DDD0BE;
-    --card:#FDFAF6; --cream:#F5EFE6; --whatsapp:#1FA855;
+    --card:#FDFAF6; --cream:#F5EFE6;
     --serif:"Iowan Old Style",Georgia,"Times New Roman",serif;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   }
@@ -134,21 +137,21 @@ const MENU = [
     font-family:var(--sans); font-size:16px; line-height:1.5;
     -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:560px; margin:0 auto; padding:0 18px}
+  .wrap{max-width:560px; margin:0 auto; padding:0 20px}
   a{color:inherit}
   img{display:block; max-width:100%}
 
   /* ---- masthead ---- */
-  .top{padding:38px 0 26px; text-align:center}
+  .top{padding:56px 0 40px; text-align:center}
   .brand{
-    font-family:var(--serif); font-size:40px; line-height:1;
+    font-family:var(--serif); font-size:42px; line-height:1;
     font-weight:400; letter-spacing:.01em; margin:0;
   }
-  .tagline{margin:12px auto 0; max-width:30ch; color:var(--muted); font-size:15px}
-  .rule{
-    width:44px; height:1px; background:var(--caramel);
-    margin:20px auto 0; opacity:.7;
+  .eggless{
+    margin:18px 0 0; font-size:12.5px; letter-spacing:.06em;
+    color:var(--caramel-dark);
   }
+  .tagline{margin:10px auto 0; max-width:32ch; color:var(--muted); font-size:14.5px}
 
   /* ---- category bar ---- */
   .cats{
@@ -156,90 +159,100 @@ const MENU = [
     background:var(--cream); border-bottom:1px solid var(--border);
   }
   .cats-inner{
-    display:flex; gap:8px; overflow-x:auto; padding:11px 18px;
+    display:flex; gap:22px; overflow-x:auto; padding:0 20px;
     max-width:560px; margin:0 auto;
     scrollbar-width:none; -webkit-overflow-scrolling:touch;
   }
   .cats-inner::-webkit-scrollbar{display:none}
   .cats a{
-    flex:0 0 auto; text-decoration:none; font-size:14px;
-    padding:6px 13px; border:1px solid var(--border); border-radius:999px;
-    background:var(--card); color:var(--espresso); white-space:nowrap;
+    flex:0 0 auto; text-decoration:none; font-size:13.5px;
+    padding:15px 0; color:var(--muted); white-space:nowrap;
+    border-bottom:2px solid transparent;
   }
-  .cats a:active{background:var(--tint)}
+  .cats a.on{color:var(--espresso); border-bottom-color:var(--caramel)}
 
   /* ---- menu ---- */
+  .cat{padding-top:58px; scroll-margin-top:52px}
+  .cat:first-child{padding-top:44px}
   .cat-head{
-    font-family:var(--serif); font-size:23px; font-weight:400;
-    margin:34px 0 16px; scroll-margin-top:60px;
+    margin:0 0 6px; font-size:11.5px; font-weight:600;
+    letter-spacing:.15em;
+    color:var(--caramel-dark);
   }
-  .item{margin-bottom:26px}
+  .item{padding:24px 0; border-bottom:1px solid var(--border)}
+  .cat .item:last-child{border-bottom:0}
+
   .shot{
-    position:relative; aspect-ratio:4/3; overflow:hidden;
-    border-radius:10px; background:var(--tint);
+    position:relative; aspect-ratio:4/5; overflow:hidden;
+    border-radius:0; background:var(--tint); margin-bottom:20px;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23C67A2C' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 34h30v9H9z'/%3E%3Cpath d='M11 34c0-6 4.5-8.5 13-8.5S37 28 37 34'/%3E%3Cpath d='M24 21v-5'/%3E%3Ccircle cx='24' cy='14' r='2'/%3E%3C/svg%3E");
     background-repeat:no-repeat; background-position:center;
-    background-size:64px 64px;
+    background-size:56px 56px;
   }
   .shot img{width:100%; height:100%; object-fit:cover}
-  .line{display:flex; align-items:baseline; gap:7px; margin-top:12px}
-  .name{font-weight:600; font-size:17px}
-  .leader{flex:1; border-bottom:1px dotted var(--border); transform:translateY(-4px)}
-  .price{font-family:var(--serif); font-size:18px; white-space:nowrap}
-  .desc{color:var(--muted); font-size:14.5px; margin-top:4px}
-  .unit{color:var(--muted); font-size:13px}
-  .tag{
-    display:inline-block; margin-top:8px; font-size:12px;
-    color:var(--caramel-dark); background:var(--tint);
-    padding:2px 9px; border-radius:999px;
-  }
-  .order{
-    display:block; width:100%; margin-top:12px; padding:11px;
-    text-align:center; text-decoration:none; font-size:15px; font-weight:600;
-    color:#fff; background:var(--whatsapp); border:0; border-radius:8px;
-    cursor:pointer;
-  }
-  .order:active{filter:brightness(.93)}
 
-  /* ---- compact row (items without featured:true) ---- */
-  .item-compact{margin-bottom:0; padding:13px 0; border-bottom:1px solid var(--border)}
-  .item-compact .line{margin-top:0}
-  .item-compact .tag{margin-top:6px}
-  .foot-row{
-    display:flex; align-items:center; justify-content:space-between;
-    gap:12px; margin-top:6px; min-height:32px;
+  .line{display:flex; align-items:baseline; justify-content:space-between; gap:18px}
+  .name{margin:0; font-weight:600; font-size:16px; line-height:1.35}
+  .price{font-family:var(--serif); font-size:19px; white-space:nowrap}
+  .tag{margin-top:6px; font-size:12px; letter-spacing:.05em; color:var(--caramel-dark)}
+  .desc{color:var(--muted); font-size:14.5px; margin:8px 0 0}
+  .single{margin-top:10px; color:var(--muted); font-size:13px}
+
+  .item-featured .name{font-family:var(--serif); font-weight:400; font-size:23px}
+  .item-featured .price{font-size:21px}
+
+  /* ---- size chips ---- */
+  .sizes{display:flex; flex-wrap:wrap; gap:7px; margin-top:14px}
+  .chip{
+    font-family:inherit; font-size:13px; line-height:1;
+    padding:0 13px; min-height:36px;
+    background:transparent; color:var(--espresso);
+    border:1px solid var(--border); border-radius:2px;
+    cursor:pointer; white-space:nowrap;
   }
-  .order-sm{
-    width:auto; flex:0 0 auto; margin-top:0;
-    padding:8px 15px; font-size:13.5px; border-radius:7px;
+  .chip.is-on{background:var(--espresso); border-color:var(--espresso); color:var(--cream)}
+
+  /* ---- order button ---- */
+  .order{
+    display:inline-block; margin-top:16px;
+    padding:0 20px; min-height:44px; line-height:44px;
+    text-align:center; text-decoration:none;
+    font-family:inherit; font-size:14px; font-weight:600; letter-spacing:.03em;
+    color:var(--cream); background:var(--espresso);
+    border:0; border-radius:2px; cursor:pointer;
   }
-  .counter{margin:0; color:var(--muted); font-size:13px; font-style:italic}
+  .order:active{opacity:.82}
+  .item-featured .order{display:block; width:100%}
+  .counter{margin:14px 0 0; color:var(--muted); font-size:13px}
 
   /* ---- shop info ---- */
   .about{
-    margin:44px 0; padding:26px 22px;
-    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    margin:76px 0 0; padding:34px 26px;
+    background:var(--card); border:1px solid var(--border); border-radius:2px;
   }
-  .about h2{font-family:var(--serif); font-size:23px; font-weight:400; margin:0 0 16px}
+  .about h2{
+    margin:0 0 20px; font-size:11.5px; font-weight:600;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--caramel-dark);
+  }
   .row{
     display:flex; justify-content:space-between; gap:16px;
-    padding:9px 0; border-bottom:1px solid var(--border); font-size:15px;
+    padding:11px 0; border-bottom:1px solid var(--border); font-size:15px;
   }
   .row:last-of-type{border-bottom:0}
   .row span:first-child{color:var(--muted)}
   .row span:last-child{text-align:right}
-  .addr{font-size:15px; margin:0 0 4px}
-  .links{margin:14px 0 22px; font-size:15px}
+  .addr{font-size:15px; margin:0 0 6px}
+  .links{margin:16px 0 24px; font-size:15px}
   .links a{color:var(--caramel-dark); text-decoration:none; border-bottom:1px solid var(--tint)}
-  .links span{color:var(--border); margin:0 9px}
-  .note{color:var(--muted); font-size:13.5px; text-align:center; margin:10px 0 0}
-  footer{padding:0 0 40px; text-align:center; color:var(--muted); font-size:13px}
+  .links span{color:var(--border); margin:0 10px}
+  .about .order{display:block; width:100%; margin-top:24px}
+  .note{color:var(--muted); font-size:13.5px; text-align:center; margin:14px 0 0}
+  footer{padding:44px 0 56px; text-align:center; color:var(--muted); font-size:13px}
 
   a:focus-visible,button:focus-visible{outline:2px solid var(--caramel); outline-offset:2px}
   @media(min-width:760px){
     .wrap,.cats-inner{max-width:880px}
-    .menu{display:grid; grid-template-columns:1fr 1fr; gap:0 28px}
-    .cat-head{grid-column:1/-1}
+    .items{display:grid; grid-template-columns:1fr 1fr; gap:0 40px}
   }
 </style>
 </head>
@@ -247,13 +260,13 @@ const MENU = [
 
 <header class="top wrap">
   <h1 class="brand" id="brand"></h1>
+  <p class="eggless" id="eggless"></p>
   <p class="tagline" id="tagline"></p>
-  <div class="rule"></div>
 </header>
 
 <nav class="cats"><div class="cats-inner" id="cats"></div></nav>
 
-<main class="wrap"><div class="menu" id="menu"></div></main>
+<main class="wrap" id="menu"></main>
 
 <section class="wrap">
   <div class="about">
@@ -285,6 +298,7 @@ const MENU = [
   };
 
   document.getElementById("brand").textContent = SHOP.name;
+  document.getElementById("eggless").textContent = SHOP.eggless || "";
   document.getElementById("tagline").textContent = SHOP.tagline;
   document.getElementById("addr").textContent = SHOP.address;
   document.getElementById("maps").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(SHOP.mapsQuery);
@@ -298,15 +312,30 @@ const MENU = [
   document.getElementById("note").textContent = SHOP.orderNote || "";
   document.getElementById("foot").textContent = SHOP.name + " · " + new Date().getFullYear();
 
+  // The size the customer picked, per item. Index into item.prices.
+  var chosen = [];
+
+  var sizeOf  = function (it, i) { return (it.prices[i] || [])[0] || ""; };
+  var priceOf = function (it, i) { return (it.prices[i] || [])[1] || ""; };
+
+  // The message names the size, so an order for a 1 kg cake cannot be
+  // read as an order for a 250 g one.
+  var message = function (it, i) {
+    var sz = sizeOf(it, i);
+    return "Hi " + SHOP.name + "! I'd like to order:\n\n• " + it.name +
+           (sz ? " — " + sz : "") + " — ₹" + priceOf(it, i) +
+           "\n\nQuantity:\nName:\nPickup or delivery:\nNeeded by:";
+  };
+
   // group items by category, keeping the order they appear in the list above
-  var order = [], groups = {};
+  var order = [], groups = {}, flat = [];
   MENU.forEach(function (it) {
     if (!groups[it.category]) { groups[it.category] = []; order.push(it.category); }
     groups[it.category].push(it);
   });
 
   document.getElementById("cats").innerHTML = order.map(function (c) {
-    return '<a href="#' + slug(c) + '">' + esc(c) + '</a>';
+    return '<a href="#' + slug(c) + '" data-for="' + slug(c) + '">' + esc(c) + '</a>';
   }).join("");
 
   // Counts photos actually put on the page, so the first two real images
@@ -315,45 +344,110 @@ const MENU = [
   var shown = 0;
 
   document.getElementById("menu").innerHTML = order.map(function (c) {
-    return '<h2 class="cat-head" id="' + slug(c) + '">' + esc(c) + '</h2>' +
+    return '<section class="cat" id="' + slug(c) + '">' +
+      '<h2 class="cat-head">' + esc(c) + '</h2>' +
+      '<div class="items">' +
       groups[c].map(function (it) {
-        var msg = "Hi " + SHOP.name + "! I'd like to order:\n\n• " + it.name +
-                  " — ₹" + it.price + (it.unit ? " (" + it.unit + ")" : "") +
-                  "\n\nQuantity:\nName:\nPickup or delivery:\nNeeded by:";
+        var n = flat.length;
+        flat.push(it);
+        chosen.push(0);
 
-        var head = '<div class="line"><span class="name">' + esc(it.name) + '</span>' +
-                   '<span class="leader"></span><span class="price">₹' + esc(it.price) + '</span></div>';
+        var multi = it.prices && it.prices.length > 1;
+
+        var head = '<div class="line">' +
+                   '<h3 class="name">' + esc(it.name) + '</h3>' +
+                   '<span class="price">₹' + esc(priceOf(it, 0)) + '</span></div>' +
+                   (it.tag ? '<div class="tag">' + esc(it.tag) + '</div>' : '');
+
+        var sizes = multi
+          ? '<div class="sizes">' + it.prices.map(function (p, i) {
+              return '<button type="button" class="chip' + (i === 0 ? ' is-on' : '') +
+                     '" data-s="' + i + '" aria-pressed="' + (i === 0 ? 'true' : 'false') +
+                     '">' + esc(p[0]) + '</button>';
+            }).join("") + '</div>'
+          : (sizeOf(it, 0) ? '<div class="single">' + esc(sizeOf(it, 0)) + '</div>' : '');
 
         var action = it.noOrder
           ? '<p class="counter">' + esc(SHOP.counterNote || "Available at the counter") + '</p>'
-          : '<a class="order' + (it.featured ? '' : ' order-sm') + '" href="' + esc(wa(msg)) +
+          : '<a class="order" href="' + esc(wa(message(it, 0))) +
             '" target="_blank" rel="noopener">Order on WhatsApp</a>';
 
+        var photo = "";
         if (it.featured) {
           var src = it.photo || ("photos/" + slug(it.name) + ".jpg");
           shown++;
-          return '<article class="item">' +
-            '<div class="shot">' +
-              '<img src="' + esc(src) + '" alt="' + esc(it.name) + '"' +
-              (shown > 2 ? ' loading="lazy"' : '') + ' decoding="async" onerror="this.remove()">' +
-            '</div>' +
-            head +
-            (it.desc ? '<p class="desc">' + esc(it.desc) + '</p>' : '') +
-            (it.unit ? '<div class="unit">' + esc(it.unit) + '</div>' : '') +
-            (it.tag ? '<div class="tag">' + esc(it.tag) + '</div>' : '') +
-            action +
-          '</article>';
+          photo = '<div class="shot">' +
+                    '<img src="' + esc(src) + '" alt="' + esc(it.name) + '"' +
+                    (shown > 2 ? ' loading="lazy"' : '') +
+                    ' decoding="async" onerror="this.remove()">' +
+                  '</div>';
         }
 
-        return '<article class="item item-compact">' + head +
-          (it.tag ? '<div class="tag">' + esc(it.tag) + '</div>' : '') +
-          '<div class="foot-row">' +
-            '<span class="unit">' + (it.unit ? esc(it.unit) : '') + '</span>' +
-            action +
-          '</div>' +
-        '</article>';
-      }).join("");
+        return '<article class="item' + (it.featured ? ' item-featured' : '') +
+               '" data-i="' + n + '">' +
+                 photo + head +
+                 (it.featured && it.desc ? '<p class="desc">' + esc(it.desc) + '</p>' : '') +
+                 sizes + action +
+               '</article>';
+      }).join("") +
+      '</div></section>';
   }).join("");
+
+  // ---- tapping a size chip repoints both the price and the link ----
+  document.getElementById("menu").addEventListener("click", function (e) {
+    var chip = e.target.closest && e.target.closest(".chip");
+    if (!chip) return;
+    var art = chip.closest(".item");
+    var it = flat[+art.getAttribute("data-i")];
+    var i = +chip.getAttribute("data-s");
+    if (!it) return;
+
+    Array.prototype.forEach.call(art.querySelectorAll(".chip"), function (c) {
+      var on = c === chip;
+      c.classList.toggle("is-on", on);
+      c.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    art.querySelector(".price").textContent = "₹" + priceOf(it, i);
+    var a = art.querySelector("a.order");
+    if (a) a.href = wa(message(it, i));
+  });
+
+  // ---- underline the category currently in view ----
+  var navLinks = {};
+  Array.prototype.forEach.call(document.querySelectorAll("#cats a"), function (a) {
+    navLinks[a.getAttribute("data-for")] = a;
+  });
+  var setActive = function (id) {
+    Object.keys(navLinks).forEach(function (k) {
+      navLinks[k].classList.toggle("on", k === id);
+    });
+  };
+  var sections = document.querySelectorAll("section.cat");
+  var BAR = 56;
+
+  // The category being read is the last one whose top has passed under the
+  // sticky bar. This is recomputed from live geometry on every callback
+  // rather than encoded in the observer's own rootMargin, so it survives
+  // rotation and resize — a viewport height measured once at startup does
+  // not stay true, and a band built from it silently stops matching.
+  var pickActive = function () {
+    if (!sections.length) return;
+    var best = sections[0];
+    Array.prototype.forEach.call(sections, function (s) {
+      if (s.getBoundingClientRect().top <= BAR) best = s;
+    });
+    setActive(best.id);
+  };
+  if (order.length) setActive(slug(order[0]));
+
+  if (window.IntersectionObserver && sections.length) {
+    var io = new IntersectionObserver(pickActive, {
+      rootMargin: "-" + BAR + "px 0px 0px 0px",
+      threshold: [0, 0.25, 0.5, 0.75, 1]
+    });
+    Array.prototype.forEach.call(sections, function (s) { io.observe(s); });
+    pickActive();
+  }
 })();
 </script>
 </body>
